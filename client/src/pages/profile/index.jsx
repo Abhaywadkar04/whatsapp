@@ -8,6 +8,12 @@ import { AvatarImage } from "@radix-ui/react-avatar";
 import { getColor } from "@/lib/utils";
 import { FaTrash, FaPlus } from "react-icons/fa";
 import { colors } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import apiClient from "@/lib/api-client";
+import { ADD_PROFILE_IMAGE_ROUTE, UPDATE_PROFILE_ROUTE } from "@/utlis/constants";
+import { useEffect, useRef } from "react";
+import { handler } from "tailwindcss-animate";
 
 function Profile() {
   const { userInfo, setUserInfo } = useAppStore();
@@ -17,12 +23,85 @@ function Profile() {
   const [image, setImage] = useState(null);
   const [selectedColor, setSelectedColor] = useState(0);
   const [hovered, setHovered] = useState(false);
+  const fileInputRef = useRef(null);
 
-  const saveChanges = async () => {};
+  useEffect(() => {
+    if (userInfo.profileSetup) {
+      setFirstName(userInfo.firstName);
+      setLastName(userInfo.lastName);
+      setSelectedColor(getColor(userInfo.color));
+    }
+  }, [userInfo]);
+  const validateProfile = () => {
+    if (!firstName) {
+      toast.error("first name is required");
+      return false;
+    }
+    if (!lastName) {
+      toast.error("last name is required");
+      return false;
+    }
+    return true;
+  };
+  const saveChanges = async () => {
+    if (validateProfile()) {
+      try {
+        const response = await apiClient.post(
+          UPDATE_PROFILE_ROUTE,
+          { firstName, lastName, color: selectedColor },
+          { withCredentials: true }
+        );
+        console.log(response);
+        if (response.status === 200 && response.data) {
+          setUserInfo({ ...response.data });
+          toast.success("profile update successfully.");
+          console.log("Navigating to /chat");
+          navigate("/chat");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const handleNavigate = () => {
+    if (userInfo.profileSetup) {
+      navigate("/chat");
+    } else {
+      toast.error("Please setup your profile to continue");
+    }
+  };
+
+  const handleFileInputClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageChange = async (event) => {
+    const file = event.target.files[0];
+    console.log(file); 
+    if (file) {
+      const formData = new FormData();
+      formData.append("profile-image", file);
+      const response = await apiClient.post(
+        ADD_PROFILE_IMAGE_ROUTE,formData,{
+          withCredentials: true,}
+        
+      );
+      if (response.status === 200 && response.data.image) {
+        setUserInfo({ ...userInfo, image: response.data.image });
+        toast.success("Image uploaded successfully");
+  }
+
+}};
+
+
+
+
+  const handleDeleteImage = async (event) => {};
   return (
     <div className="bg-[#1b1c24] h-[100vh] flex items-center justify-center flex-col gap-10">
       <div className="flex flex-col gap-10 w-[80vw] md:w-max">
-        <div>
+        <div onClick={handleNavigate}>
           <IoArrowBack className="text-4xl lg:text-6xl text-white/90 cursor-pointer" />
         </div>
         <div className="grid grid-cols-2">
@@ -54,6 +133,7 @@ function Profile() {
               <div
                 className="absolute inset-0 ring-  bg-black/50 flex items-center justify-center ring-fuchsia-50 rounded-full
               "
+                onClick={image ? handleDeleteImage : handleFileInputClick}
               >
                 {image ? (
                   <FaTrash className="text-white text-3xl cursor-pointer" />
@@ -62,7 +142,14 @@ function Profile() {
                 )}
               </div>
             )}
-            {/* <input type="text" /> */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleImageChange}
+              name="profile-image"
+              accept=".png, .jpg, .jpeg, .svg, .webp"
+            />
           </div>
           <div className="flex min-w-32 md:min-w-64 flex-col gap-5 text-white items-center justify-center">
             <div className="w-full">
@@ -85,7 +172,7 @@ function Profile() {
             </div>
             <div className="w-full">
               <input
-                placeholder="Second Name"
+                placeholder="last Name"
                 type="text"
                 onChange={(e) => setLastName(e.target.value)}
                 value={lastName}
@@ -104,6 +191,14 @@ function Profile() {
               ))}
             </div>
           </div>
+        </div>
+        <div className="w-full">
+          <Button
+            className="h-16 w-full bg-purple-700 hover:bg-purple-900 transition-all duration-300"
+            onClick={saveChanges}
+          >
+            Save Changes
+          </Button>
         </div>
       </div>
     </div>

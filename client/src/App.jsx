@@ -4,11 +4,13 @@ import Auth from "./pages/auth";
 import "./App.css";
 import { Button } from "./components/ui/button";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Chat from "./pages/chat";
 import Profile from "./pages/profile";
-import React, { children } from "react";
+import Chat from "./pages/chat";
+
 import { GET_USER_ROUTE } from "./utlis/constants";
 import { useAppStore } from "./store";
+import React, { children } from "react";
+
 import apiClient from "./lib/api-client";
 
 const PrivateRoute = ({ children }) => {
@@ -67,7 +69,7 @@ function App() {
           }
         />
         <Route
-          path="/Chat"
+          path="/chat"
           element={
             <PrivateRoute>
               <Chat />

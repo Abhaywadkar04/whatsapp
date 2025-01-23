@@ -19,7 +19,7 @@ import { useAppStore } from "@/store";
 
 const Auth = () => {
   const navigate = useNavigate();
-  const {setUserInfo}=useAppStore()
+  const { setUserInfo } = useAppStore();
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
   const [ConfirmPassword, setConfirmPassword] = useState("");
