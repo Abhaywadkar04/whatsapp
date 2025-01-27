@@ -1,15 +1,12 @@
-import React from "react";
-import { useEffect } from "react";
-import { toast } from "sonner";
 import { useAppStore } from "@/store";
 import { useNavigate } from "react-router-dom";
 
 function Chat() {
   const { userInfo } = useAppStore();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
-    console.log("info found",userInfo);
+    console.log("info found", userInfo);
     if (!userInfo?.profileSetup) {
       toast("Please setup your profile to continue");
       navigate("/profile");
@@ -25,4 +22,3 @@ function Chat() {
 }
 
 export default Chat;
-

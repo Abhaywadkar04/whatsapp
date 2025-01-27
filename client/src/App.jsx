@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import Auth from "./pages/auth";
 import "./App.css";
-import { Button } from "./components/ui/button";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Profile from "./pages/profile";
 import Chat from "./pages/chat";

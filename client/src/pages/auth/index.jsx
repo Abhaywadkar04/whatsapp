@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import apiClient from "@/lib/api-client";
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utlis/constants";
+// import { LOGIN_ROUTE, SIGNUP_ROUTE, GET_USER_ROUTE } from "@/utlis/constants";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "@/store";
 
@@ -57,7 +58,7 @@ const Auth = () => {
       const response = await apiClient.post(
         LOGIN_ROUTE,
         {
-          email: Email,
+          email: Email, // Use lowercase keys
           password: Password,
         },
         {
@@ -81,7 +82,7 @@ const Auth = () => {
       const response = await apiClient.post(
         SIGNUP_ROUTE,
         {
-          email: Email,
+          email: Email, // Use lowercase keys
           password: Password,
         },
         {
