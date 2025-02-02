@@ -141,7 +141,7 @@ export const login = async (req, res, next) => {
                    }
 
                    const date = Date.now();
-                   let fileName="uploads/profiles"+date+req.file.originalname;
+                   let fileName="uploads/profiles/"+date+req.file.originalname;
                    renameSync(req.file.path,fileName);
 
                    const updatedUser = await User.findByIdAndUpdate(req.userId,{image:fileName},{new:true,runValidators:true});

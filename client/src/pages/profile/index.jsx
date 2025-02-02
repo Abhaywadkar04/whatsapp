@@ -11,7 +11,11 @@ import { colors } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import apiClient from "@/lib/api-client";
-import { ADD_PROFILE_IMAGE_ROUTE, UPDATE_PROFILE_ROUTE ,REMOVE_PROFILE_IMAGE_ROUTE} from "@/utlis/constants";
+import {
+  ADD_PROFILE_IMAGE_ROUTE,
+  UPDATE_PROFILE_ROUTE,
+  REMOVE_PROFILE_IMAGE_ROUTE,
+} from "@/utlis/constants";
 import { useEffect, useRef } from "react";
 import { handler } from "tailwindcss-animate";
 import { HOST } from "@/utlis/constants";
@@ -32,8 +36,9 @@ function Profile() {
       setLastName(userInfo.lastName);
       setSelectedColor(getColor(userInfo.color));
     }
-    if(userInfo.image){
+    if (userInfo.image) {
       setImage(`${HOST}/${userInfo.image}`);
+      console.log("image found", `${HOST}/${userInfo.image}`);
     }
   }, [userInfo]);
   const validateProfile = () => {
@@ -82,39 +87,33 @@ function Profile() {
 
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
-    console.log(file); 
+    console.log(file);
     if (file) {
       const formData = new FormData();
       formData.append("profile-image", file);
-      const response = await apiClient.post(
-        ADD_PROFILE_IMAGE_ROUTE,formData,{
-          withCredentials: true,}
-        
-      );
+      const response = await apiClient.post(ADD_PROFILE_IMAGE_ROUTE, formData, {
+        withCredentials: true,
+      });
       if (response.status === 200 && response.data.image) {
         setUserInfo({ ...userInfo, image: response.data.image });
         toast.success("Image uploaded successfully");
-  }
-
-}};
-
-
-
+      }
+    }
+  };
 
   const handleDeleteImage = async () => {
     try {
-      const response = await apiClient.delete(REMOVE_PROFILE_IMAGE_ROUTE, {withCredentials: true});
-      if(response.status===200){
-        setUserInfo({...userInfo,image:null});
+      const response = await apiClient.delete(REMOVE_PROFILE_IMAGE_ROUTE, {
+        withCredentials: true,
+      });
+      if (response.status === 200) {
+        setUserInfo({ ...userInfo, image: null });
         toast.success("Image removed successfully");
         setImage(null);
       }
-      
     } catch (error) {
       console.log(error);
-      
     }
-
   };
   return (
     <div className="bg-[#1b1c24] h-[100vh] flex items-center justify-center flex-col gap-10">
