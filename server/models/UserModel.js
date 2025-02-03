@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { genSalt, hash } from "bcrypt";
+
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -31,16 +32,21 @@ const userSchema = new mongoose.Schema({
     required: false,
     default: false, // Ensures a default value is set if not provided
   },
-  
-
 });
 
-userSchema.pre("save", async function (next){
-    const salt = await genSalt()
-    this.password= await hash(this.password,salt);
+// Middleware to hash password before saving, but only if the password is modified
+userSchema.pre("save", async function (next) {
+    // Check if the password field has been modified before hashing
+    if (!this.isModified("password")) {
+        return next();  // If password is not modified, skip the hashing
+    }
+    
+    // Otherwise, hash the password
+    const salt = await genSalt();
+    this.password = await hash(this.password, salt);
     next();
 });
 
-const User= mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
 
 export default User;
