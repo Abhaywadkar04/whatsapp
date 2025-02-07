@@ -35,3 +35,8 @@ export const createAuthSlice = (set) => ({
     setProfileSetup: (ProfileSetup) => set({ ProfileSetup }),
     setEmail: (Email) => set({ Email }),
 });
+
+
+
+
+
